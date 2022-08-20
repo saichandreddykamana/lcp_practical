@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/home.css') }}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/details.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <title>Pupil Information</title>
+</head>
+<body>
+    <div class="container-1">
+        <div class="navbar">
+            <div class="logo"></div>
+            <div class="nav-menu">
+                <ul class="nav-list">
+                    <li><a href="{{url_for('index')}}"><i class="fa fa-home"></i>&nbsp;Home</a></li>
+                    <li><a href="{{url_for('search')}}"><i class="fa fa-search"></i>&nbsp;Search</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="details-container">
+                <table>
+                    <tr>
+                        <td> <strong> {{result['First name'] + ' ' + result['Surname']}} </strong> Information</td>
+                    </tr>
+                    {% for (key, value) in result.items() %}
+                        <tr>
+                            <td>
+                                <div class="information">
+                                    <p class="heading"> {{key}} </p>
+                                    <p class="details"> {{value}} </p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+            </table>
+            <div class="extra-information">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#data"> <b>Extra Information</b></a></li>
+                  </ul>
+
+                  <div class="tab-content">
+                    <div id="data" class="tab-pane fade in active">
+                        <table>
+                            <tr>
+                                {% for column in columns %}
+                                    {% if column != 'Id' %}
+                                        <th>{{column}}</th>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                            {% for row in extra_info %}
+                                <tr>
+                                    {% for (key,value) in row.items() %}
+                                        {% if key != 'Id' %}
+                                            <td>{{value}}</td>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+                        <div class="pagination">
+                            <div class="pagination-links">
+                                <a href="#">&laquo;</a>
+                                {% for page in range(0, total_pages) %}
+                                    <a href="{{url_for('details', page=page+1,id=result['Id'])}}">{{page+1}}</a>
+                                {% endfor %}
+                                <a href="#">&raquo;</a>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="{{url_for('static', filename = 'js/details.js') }}"></script>
+</body>
+</body>
+</html>

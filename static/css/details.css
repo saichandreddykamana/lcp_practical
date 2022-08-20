@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+
+body{
+    font-family: 'Quicksand', sans-serif !important;
+}
+
+.details-container{
+    padding: 20px;
+}
+
+table{
+    width: 100%;
+    border: 1px solid var(--background-hover);
+    margin: 20px auto;
+}
+
+table tr:nth-child(1) td {
+    background-color: var(--light-blue);
+    padding: 15px;
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+table tr td {
+    border-bottom: 1px solid var(--background-hover);
+}
+
+.information{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.heading{
+    width: 20%;
+    padding: 10px;
+    background-color: var(--light-blue);
+    font-weight: bold;
+    margin: 0 !important;
+}
+
+.details{
+    padding: 10px;
+    margin: 0 !important;
+}
+
+.tab-content{
+    border: 1px solid #ddd;
+}
+
+.nav-tabs li{
+    font-size: 17px;
+    text-transform: uppercase;
+}
+
+#data{
+    padding: 20px;
+}
+
+#data table tr th{
+    background-color: var(--light-blue);
+    padding: 15px;
+    border: 1px solid #ddd;
+    min-width: 40%;
+}
+
+#data table tr td{
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: justify;
+}

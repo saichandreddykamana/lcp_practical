@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Quicksand:wght@500&display=swap');
 *{
     box-sizing: border-box;
     padding: 0%;
@@ -22,9 +23,14 @@ body{
     border-radius: 5px;
     width: 100%;
     min-height: 100%;
+    font-family: 'Quicksand', sans-serif;
 }
 
-.container{
+.expand{
+    overflow: visible;
+}
+
+.container-1{
     min-height:100%;
 }
 
@@ -37,6 +43,11 @@ body{
 
 .logo{
     min-width: 5%;
+    background-image: url(../images/logo.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 50px;
 }
 
 .logo img{
@@ -55,6 +66,11 @@ body{
     display: flex;
 }
 
+.nav-list .fa{
+    font-size: 13px;
+    padding-right: 2px;
+}
+
 .nav-list li{
     padding: 10px 20px;
     border-radius: 2px;
@@ -66,7 +82,9 @@ body{
 .nav-list li a{
     text-decoration: none;
     color: inherit;
-    font-family: 'Quicksand', sans-serif;
+    display: flex;
+    font-size: 14px;
+    align-items: center;
 }
 
 .nav-list li:hover{
@@ -82,14 +100,15 @@ body{
     padding: 10px;
 }
 
-.dashboard-dropdown-heading h2{
+.dashboard-dropdown-heading h2, .table-dropdown-heading h2{
     padding: 10px;    
     display: flex;
     align-items: center;
     justify-content: space-between;
+    text-transform: uppercase;
 }
 
-.dashboard-dropdown-heading h2 span{
+.dashboard-dropdown-heading h2 span, .table-dropdown-heading h2 span{
     cursor: pointer;    
     background-repeat: no-repeat;
     background-size: contain;
@@ -98,13 +117,17 @@ body{
 }
 
 .dashboard{
-    display: none;
+    display: flex;
     background-color: var(--light-blue);
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-evenly;
     padding: 20px;
     border-radius: 4px;
+}
+
+.table{
+    display: block;
 }
 
 .plus{
@@ -115,38 +138,33 @@ body{
     background-image: url('../images/minus-icon.svg');
 }
 
-.show{
-    display: flex;
+.hide{
+    display: none;
 }
 
 .dashboard-col{
-    width: 45%;
+    width: 30%;
     padding: inherit;
     background-color: var(--white);
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 }
 
 .dashboard-col .col-icon{
-    width: 30%;
-    height: inherit;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
+    width: fit-content;
 }
 
-.dashboard-col:nth-child(1) .col-icon{
-    background-image: url("../images/dashboard-pupil-icon.jpg");
-}
-
-.dashboard-col:nth-child(2) .col-icon{
-    background-image: url("../images/dashboard-school-icon.png");
+.dashboard-col .col-icon h1{
+    font-family: 'Bebas Neue', cursive;
+    font-size: 50px;
+    color: rgb(122 122 122);
 }
 
 .dashboard-col .col-content{
-    width: 70%;
+    width: fit-content;
 }
 
 .dashboard-col .col-content p{
@@ -171,14 +189,73 @@ body{
 
 .table-container table tr th {
     background-color: var(--light-blue);
-    padding: 5px;
+    padding: 10px;
 }
 
-.pagination {
+.table-container table tr td{
+    border-bottom: 1px solid var(--background-hover);
+    padding: 1px;
+}
+
+.data-menu {
+    color: black;
+    padding: 8px;
+    font-size: 13px;
+    border: none;
+    cursor: pointer;
+}
+
+.data-dropdown {
+    position: relative;
     display: inline-block;
+}
+  
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid var(--background-hover);
+    min-width: 200px;
+    z-index: 1;
+}
+
+.filter{
+    padding: 15px;
+    margin: 15px 0px;
+    border: 1px solid var(--background-hover);
+    border-radius: 4px;
+    width: max-content;
+    font-size: 14px;
+}
+
+.filter span, .filter{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+  
+.dropdown-content a {
+    color: black;
+    padding: 5px 10px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {background-color: #ddd}
+  
+.show-menu {display:block;}
+
+.pagination {
+    display: inline-flex;
     width: 100%;
-    margin: 0 auto;
-    padding: 10px;
+    margin: 10px 0 0 0;
+    padding: 10px 0 0 0;
+}
+
+.pagination-links{
+    margin: 0px auto;
 }
   
 .pagination a {
@@ -199,10 +276,6 @@ body{
 .pagination a:hover:not(.active) {background-color: var(--light-gray)}
 
 @media only screen and (max-width: 700px) {
-    .dashboard{
-        display: block;
-    }
-
     .dashboard-col{
         margin: 10px 0px;
         width: 100%;
