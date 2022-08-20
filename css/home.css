@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+*{
+    box-sizing: border-box;
+    padding: 0%;
+    margin: 0%;
+}
+
+:root{
+    --background-color: #F5F5F5;
+    --background-hover: rgb(241 241 241);
+    --light-gray: rgb(163, 163, 163);
+    --white: white;
+    --black: black;
+    --light-blue: rgba(150, 212, 212, 0.4);
+}
+
+html{
+    height: 100%;
+}
+
+body{
+    border-radius: 5px;
+    width: 100%;
+    min-height: 100%;
+}
+
+.container{
+    min-height:100%;
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--light-blue);
+}
+
+.logo{
+    min-width: 5%;
+}
+
+.logo img{
+    width: 100%;
+    height: fit-content;
+}
+
+.nav-menu{
+    min-width: 95%; 
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.nav-list{
+    list-style: none;
+    display: flex;
+}
+
+.nav-list li{
+    padding: 10px 20px;
+    border-radius: 2px;
+    margin: 0px 5px;
+    color: var(--black);
+    cursor: pointer;
+}
+
+.nav-list li a{
+    text-decoration: none;
+    color: inherit;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.nav-list li:hover{
+    background-color: var(--background-hover);
+}
+
+.main-container{
+    padding: 2%;
+}
+
+.dashboard-container{
+    border: 1px solid var(--background-hover);
+    padding: 10px;
+}
+
+.dashboard-dropdown-heading h2{
+    padding: 10px;    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dashboard-dropdown-heading h2 span{
+    cursor: pointer;    
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 15px;   
+    padding: 2px 20px;
+}
+
+.dashboard{
+    display: none;
+    background-color: var(--light-blue);
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.plus{
+    background-image: url('../images/plus-icon.svg');
+}
+
+.minus{
+    background-image: url('../images/minus-icon.svg');
+}
+
+.show{
+    display: flex;
+}
+
+.dashboard-col{
+    width: 45%;
+    padding: inherit;
+    background-color: var(--white);
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.dashboard-col .col-icon{
+    width: 30%;
+    height: inherit;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.dashboard-col:nth-child(1) .col-icon{
+    background-image: url("../images/dashboard-pupil-icon.jpg");
+}
+
+.dashboard-col:nth-child(2) .col-icon{
+    background-image: url("../images/dashboard-school-icon.png");
+}
+
+.dashboard-col .col-content{
+    width: 70%;
+}
+
+.dashboard-col .col-content p{
+    text-align: justify;
+    color: var(--light-gray);
+    font-size: 13px;
+}
+
+.dashboard-col .col-content h2{
+    text-transform: uppercase;
+}
+
+.table-container{
+    border: 1px solid var(--background-hover);
+    margin: 2px 0px;
+    padding: 10px;
+}
+
+.table-container table{
+    width: 100%;
+}
+
+.table-container table tr th {
+    background-color: var(--light-blue);
+    padding: 5px;
+}
+
+.pagination {
+    display: inline-block;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+}
+  
+.pagination a {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    transition: background-color .3s;
+    border: 1px solid #ddd;
+    margin: 0 4px;
+}
+  
+.pagination a.active {
+    background-color: var(--light-blue);
+    border: 1px solid var(--light-blue);
+}
+  
+.pagination a:hover:not(.active) {background-color: var(--light-gray)}
+
+@media only screen and (max-width: 700px) {
+    .dashboard{
+        display: block;
+    }
+
+    .dashboard-col{
+        margin: 10px 0px;
+        width: 100%;
+    }
+}
