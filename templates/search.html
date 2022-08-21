@@ -18,12 +18,13 @@
             <div class="nav-menu">
                 <ul class="nav-list">
                     <li><a href="{{url_for('index')}}"><i class="fa fa-home"></i>&nbsp;Home</a></li>
-                    <li><a href="{{url_for('search')}}"><i class="fa fa-search"></i>&nbsp;Search</a></li>
                 </ul>
             </div>
         </div>
         <div class="search-container">
-
+                {{result}}
+                <br>
+                {{columns}}
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

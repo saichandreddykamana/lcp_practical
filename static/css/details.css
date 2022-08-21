@@ -16,6 +16,7 @@ table{
 
 table tr:nth-child(1) td {
     background-color: var(--light-blue);
+    color: var(--white);
     padding: 15px;
     font-size: 17px;
     text-transform: uppercase;
@@ -35,8 +36,8 @@ table tr td {
     width: 20%;
     padding: 10px;
     background-color: var(--light-blue);
-    font-weight: bold;
     margin: 0 !important;
+    color: var(--white);
 }
 
 .details{
@@ -62,6 +63,8 @@ table tr td {
     padding: 15px;
     border: 1px solid #ddd;
     min-width: 40%;
+    font-weight: 400;
+    color: white;
 }
 
 #data table tr td{

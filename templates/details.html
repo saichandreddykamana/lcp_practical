@@ -19,7 +19,6 @@
             <div class="nav-menu">
                 <ul class="nav-list">
                     <li><a href="{{url_for('index')}}"><i class="fa fa-home"></i>&nbsp;Home</a></li>
-                    <li><a href="{{url_for('search')}}"><i class="fa fa-search"></i>&nbsp;Search</a></li>
                 </ul>
             </div>
         </div>
@@ -67,11 +66,19 @@
 
                         <div class="pagination">
                             <div class="pagination-links">
-                                <a href="#">&laquo;</a>
+                                {% if current_page-1 >= 1 %}
+                                    <a href="{{url_for('details', page=current_page-1,id=result['Id'])}}">&laquo;</a>
+                                {% else %}
+                                    <a href="" style="pointer-events: none">&laquo;</a>
+                                {% endif %}
                                 {% for page in range(0, total_pages) %}
-                                    <a href="{{url_for('details', page=page+1,id=result['Id'])}}">{{page+1}}</a>
+                                    <a {% if current_page - 1 == page %} class="active" {% endif %}  href="{{url_for('details', page=page+1,id=result['Id'])}}">{{page+1}}</a>
                                 {% endfor %}
-                                <a href="#">&raquo;</a>
+                                {% if current_page+1 <= total_pages %}
+                                    <a href="{{url_for('details', page=current_page+1,id=result['Id'])}}">&raquo;</a>
+                                {% else %}
+                                    <a href="" style="pointer-events: none">&raquo;</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>

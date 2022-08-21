@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 import datetime
 import math
+import json
 
 app = Flask(__name__, template_folder='templates')
 app.config['MYSQL_HOST'] = 'localhost'
@@ -12,31 +13,81 @@ app.config['MYSQL_DB'] = 'lcp_practical'
 mysql = MySQL(app)
 
 
+
+def database_information():
+    db_cursor = mysql.connection.cursor()
+    db_cursor.execute('''SELECT TABLE_NAME, COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = "lcp_practical"''')
+    result = db_cursor.fetchall()
+    columns = db_cursor.description
+    result = converter(result, columns)
+    tables = set()
+    for row in result:
+        tables.add(row['Table name'])
+    return tables, result
+
+
+def graph_and_chart():
+    db_cursor = mysql.connection.cursor()
+    db_cursor.execute(
+        'SELECT COUNT(pupils.id) AS pupils, schools.school_name AS school_name FROM pupils INNER JOIN schools ON pupils.school_id=schools.school_code GROUP BY school_name')
+    pupils_school = db_cursor.fetchall()
+    pupils_school_columns = db_cursor.description
+    pupils_school_results = converter(pupils_school, pupils_school_columns)
+
+    seasons = []
+    db_cursor.execute('SELECT COUNT(*) FROM pupils WHERE MONTH(date_of_birth) <= 3')
+    spring = db_cursor.fetchall()[0][0]
+
+    db_cursor.execute('SELECT COUNT(*) FROM pupils WHERE MONTH(date_of_birth) >= 4 AND MONTH(date_of_birth) <= 8')
+    autumn = db_cursor.fetchall()[0][0]
+
+    db_cursor.execute('SELECT COUNT(*) FROM pupils WHERE MONTH(date_of_birth) >= 9 AND MONTH(date_of_birth) <= 12')
+    summer = db_cursor.fetchall()[0][0]
+    seasons.append({'Season': 'Spring', 'Pupils': spring})
+    seasons.append({'Season': 'Summer', 'Pupils': summer})
+    seasons.append({'Season': 'Autumn', 'Pupils': autumn})
+    return pupils_school_results, seasons
+
+
+def converter(arr, columns):
+    final_results = []
+    for row in arr:
+        obj = {}
+        for i in range(len(row)):
+            if isinstance(row[i], datetime.date):
+                obj[columns[i][0].replace('_', ' ').capitalize()] = row[i].strftime('%Y-%m-%d')
+            else:
+                obj[columns[i][0].replace('_', ' ').capitalize()] = row[i]
+        final_results.append(obj)
+    return final_results
+
 @app.route('/', defaults={'page': 1})
 @app.route('/page/<int:page>')
 def index(page):
-    per_page = 10
-    start = (page * per_page) - 10
+    per_page = 20
+    start = (page * per_page) - 20
     db_cursor = mysql.connection.cursor()
     db_cursor.execute("SELECT pupils.id, pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, schools.school_name FROM pupils INNER JOIN schools ON pupils.school_id = schools.school_code LIMIT %s, %s", (start , per_page))
     result = db_cursor.fetchall()
     columns = db_cursor.description
     result = converter(result, columns)
     columns = result[0].keys()
+
     db_cursor.execute('SELECT COUNT(*) FROM pupils')
     count = db_cursor.fetchall()
-    db_cursor.execute('SELECT COUNT(*) FROM schools')
-    school_count = db_cursor.fetchall()
-    db_cursor.execute('SELECT COUNT(*) FROM statements')
-    statement_count = db_cursor.fetchall()
-    return render_template('home.html', result=result, columns=columns, total_pages=math.ceil((list(count)[0][0])/per_page), pupil_count=count[0][0], school_count=school_count[0][0], statement_count=statement_count[0][0])
+
+    pupils_school_results, seasons = graph_and_chart()
+
+    tables, table_columns = database_information()
+
+    return render_template('home.html', data=json.dumps(pupils_school_results), tables=tables, table_columns=table_columns, seasons=json.dumps(seasons), result=result, columns=columns, total_pages=math.ceil((list(count)[0][0])/per_page), pupil_count=count[0][0], current_page=page)
 
 
 @app.route('/filter', defaults={'page': 1})
 @app.route('/filter/<int:page>')
 def filter(page):
-    per_page = 10
-    start = (page * per_page) - 10
+    per_page = 20
+    start = (page * per_page) - 20
     filters = request.args
     db_cursor = mysql.connection.cursor()
     query = '''SELECT pupils.id, pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, schools.school_name FROM pupils INNER JOIN schools ON pupils.school_id = schools.school_code '''
@@ -55,30 +106,29 @@ def filter(page):
     columns = result[0].keys()
     db_cursor.execute('SELECT COUNT(*) FROM pupils')
     count = db_cursor.fetchall()
-    db_cursor.execute('SELECT COUNT(*) FROM schools')
-    school_count = db_cursor.fetchall()
-    db_cursor.execute('SELECT COUNT(*) FROM statements')
-    statement_count = db_cursor.fetchall()
-    return render_template('home.html', result=result, columns=columns,
-                           total_pages=total_pages, filters=filters, pupil_count=count[0][0], school_count=school_count[0][0], statement_count=statement_count[0][0])
-
-
-def converter(arr, columns):
-    final_results = []
-    for row in arr:
-        obj = {}
-        for i in range(len(row)):
-            if isinstance(row[i], datetime.date):
-                obj[columns[i][0].replace('_', ' ').capitalize()] = row[i].strftime('%Y-%m-%d')
-            else:
-                obj[columns[i][0].replace('_', ' ').capitalize()] = row[i]
-        final_results.append(obj)
-    return final_results
+    pupils_school_results, seasons = graph_and_chart()
+    return render_template('home.html', seasons=json.dumps(seasons), data=json.dumps(pupils_school_results), result=result, columns=columns,
+                           total_pages=total_pages, filters=filters, pupil_count=count[0][0], current_page=page, filter=True)
 
 
 @app.route('/search')
+@app.route('/search/<search_input>')
 def search():
-    return render_template('search.html')
+    results = []
+    columns = []
+    if request.method == 'GET':
+        search_sentence = request.args.get('search_input')
+        print("SEARCH SENTENCE : ", search_sentence)
+        if search_sentence != '' or search_sentence is not None:
+            db_cursor = mysql.connection.cursor()
+            query = "select pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, statements.statement FROM pupils, data, statements WHERE pupils.id = data.pupil_id AND data.statement_id = statements.statement_id AND pupils.first_name LIKE '%"+ search_sentence +"%' OR pupils.surname LIKE '%"+ search_sentence +"%' OR pupils.ethnicity LIKE '%"+ search_sentence +"%' OR statements.statement LIKE '%"+ search_sentence +"%'"
+            print("QUERY : ", query)
+            db_cursor.execute(query)
+            result = db_cursor.fetchall()
+            columns = db_cursor.description
+            result = converter(result, columns)
+            columns = result[0].keys()
+    return render_template('search.html', result=result, columns=columns)
 
 
 @app.route('/pupil/<id>', defaults={'page': 1})
@@ -105,7 +155,7 @@ def details(id, page):
     extra_columns = db_cursor.description
     extra = converter(extra_result, extra_columns)
     columns = extra[0].keys()
-    return render_template('details.html', result=result[0], extra_info=extra, columns=columns, total_pages=total_pages)
+    return render_template('details.html', result=result[0], extra_info=extra, columns=columns, total_pages=total_pages, current_page=page)
 
 
 if __name__ == '__main__':
