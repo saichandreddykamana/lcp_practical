@@ -65,7 +65,7 @@ def converter(arr, columns):
 @app.route('/page/<int:page>')
 def index(page):
     per_page = 20
-    start = (page * per_page) - 20
+    start = (page * per_page) - per_page
     db_cursor = mysql.connection.cursor()
     db_cursor.execute("SELECT pupils.id, pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, schools.school_name FROM pupils INNER JOIN schools ON pupils.school_id = schools.school_code LIMIT %s, %s", (start , per_page))
     result = db_cursor.fetchall()
@@ -87,7 +87,7 @@ def index(page):
 @app.route('/filter/<int:page>')
 def filter(page):
     per_page = 20
-    start = (page * per_page) - 20
+    start = (page * per_page) - per_page
     filters = request.args
     db_cursor = mysql.connection.cursor()
     query = '''SELECT pupils.id, pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, schools.school_name FROM pupils INNER JOIN schools ON pupils.school_id = schools.school_code '''
@@ -111,24 +111,33 @@ def filter(page):
                            total_pages=total_pages, filters=filters, pupil_count=count[0][0], current_page=page, filter=True)
 
 
-@app.route('/search')
-@app.route('/search/<search_input>')
-def search():
-    results = []
+@app.route('/search', defaults={'page': 1})
+@app.route('/search/<search_input>/<int:page>')
+def search(page):
+    per_page = 50
+    start = (page*per_page) - per_page
+    result = []
     columns = []
     if request.method == 'GET':
         search_sentence = request.args.get('search_input')
-        print("SEARCH SENTENCE : ", search_sentence)
+        print(request.args)
         if search_sentence != '' or search_sentence is not None:
             db_cursor = mysql.connection.cursor()
-            query = "select pupils.first_name, pupils.surname, pupils.gender, pupils.date_of_birth, pupils.ethnicity, statements.statement FROM pupils, data, statements WHERE pupils.id = data.pupil_id AND data.statement_id = statements.statement_id AND pupils.first_name LIKE '%"+ search_sentence +"%' OR pupils.surname LIKE '%"+ search_sentence +"%' OR pupils.ethnicity LIKE '%"+ search_sentence +"%' OR statements.statement LIKE '%"+ search_sentence +"%'"
-            print("QUERY : ", query)
-            db_cursor.execute(query)
+
+            query = "SELECT pupils.first_name, pupils.surname, statements.statement FROM pupils INNER JOIN data ON data.pupil_id = pupils.id INNER JOIN statements ON statements.statement_id = data.statement_id WHERE pupils.first_name LIKE '%"+ search_sentence +"%' OR pupils.surname LIKE '%"+ search_sentence +"%' OR pupils.ethnicity LIKE '%"+ search_sentence +"%' OR statements.statement LIKE '%"+ search_sentence +"%'"
+            search_query = query
+            db_cursor.execute(search_query)
             result = db_cursor.fetchall()
             columns = db_cursor.description
             result = converter(result, columns)
             columns = result[0].keys()
-    return render_template('search.html', result=result, columns=columns)
+            total_rows = query + " LIMIT 10000"
+            db_cursor.execute(total_rows)
+            print(search_query)
+            print(total_rows)
+            total_rows_result = list(db_cursor.fetchall())
+            total_pages = math.ceil(len(total_rows_result)/per_page)
+    return render_template('search.html', result=result, columns=columns, search_sentence=search_sentence, total_pages=total_pages, current_page=page)
 
 
 @app.route('/pupil/<id>', defaults={'page': 1})

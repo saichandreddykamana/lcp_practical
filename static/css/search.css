@@ -1,0 +1,18 @@
+
+table{
+    border: 1px solid var(--background-hover);
+    min-width: 100%;
+}
+
+table tr th {
+    background-color: var(--light-blue);
+    padding: 10px;
+    color: white;
+    font-weight: 500;
+    min-width: 10vw;
+}
+
+table tr td{
+    border-bottom: 1px solid var(--background-hover);
+    padding: 8px;
+}

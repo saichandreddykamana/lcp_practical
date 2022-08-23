@@ -57,7 +57,9 @@
                                 <tr>
                                     {% for (key,value) in row.items() %}
                                         {% if key != 'Id' %}
-                                            <td>{{value}}</td>
+                                            <td>
+                                                 {{value}}
+                                            </td>
                                         {% endif %}
                                     {% endfor %}
                                 </tr>

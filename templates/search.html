@@ -12,9 +12,7 @@
 <body>
     <div class="container">
         <div class="navbar">
-            <div class="logo">
-                <img src="../images/logo.png" alt="logo">
-            </div>
+            <div class="logo"></div>
             <div class="nav-menu">
                 <ul class="nav-list">
                     <li><a href="{{url_for('index')}}"><i class="fa fa-home"></i>&nbsp;Home</a></li>
@@ -22,13 +20,59 @@
             </div>
         </div>
         <div class="search-container">
-                {{result}}
-                <br>
-                {{columns}}
+                <table>
+                    <tr>
+                        {% for column in columns %}
+                            {% if column != 'Id' %}
+                                <th>{{column}}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                    {% for row in result %}
+                        <tr>
+                           {% for (key, value) in row.items() %}
+                               {% if key != 'Id' %}
+                                    <td>
+                                         <div class="dropdown">
+                                                <div class="data-menu"> {{value}} </div>
+                                                <div class="dropdown-content">
+                                                    <a href="{{url_for('details', id=row['Id'])}}" target="_blank"><i class="fas fa-external-link"></i>&nbsp; View Details</a>
+                                                    {% if key != 'Statement' %}
+                                                        <a href="{{url_for('search', column=key, value=value, filter='match', search_input=search_sentence, search='pupil')}}"><i class="fas fa-equals" style="color:green"></i> &nbsp; Show Matching</a>
+                                                        <a href="{{url_for('search', column=key, value=value, filter='not', search_input=search_sentence, search='pupil')}}"><i class='fas fa-not-equal' style="color:red"></i> &nbsp; Filter Out</a>
+                                                    {% elif key == 'Statement' %}
+                                                        <a href="{{url_for('search', column=key, value=value, filter='match', search_input=search_sentence, search='statement')}}"><i class="fas fa-equals" style="color:green"></i> &nbsp; Show Matching</a>
+                                                        <a href="{{url_for('search', column=key, value=value, filter='not', search_input=search_sentence, search='statement')}}"><i class='fas fa-not-equal' style="color:red"></i> &nbsp; Filter Out</a>
+                                                    {% else %}{% endif %}
+                                                </div>
+                                         </div>
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+<!--            <div class="pagination">-->
+<!--                        <div class="pagination-links">-->
+<!--                            {% if current_page-1 >= 1 %}-->
+<!--                                    <a href="{{url_for('search', page=current_page-1, search_input=search_sentence)}}">&laquo;</a>-->
+<!--                            {% else %}-->
+<!--                                <a href="" style="pointer-events: none">&laquo;</a>-->
+<!--                            {% endif %}-->
+<!--                            {% for page in range(0, total_pages) %}-->
+<!--                                <a {% if current_page - 1 == page %} class="active" {% endif %} href="{{url_for('search', page=page+1, search_input=search_sentence)}}">{{page+1}}</a>-->
+<!--                            {% endfor %}-->
+<!--                            {% if current_page+1 <= total_pages %}-->
+<!--                                <a href="{{url_for('search', page=current_page+1, search_input=search_sentence)}}">&raquo;</a>-->
+<!--                            {% else %}-->
+<!--                                <a href="" style="pointer-events: none">&raquo;</a>-->
+<!--                            {% endif %}-->
+<!--                        </div>-->
+<!--                  </div>-->
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="{{url_for('static', filename = 'js/search.js') }}"></script>
+    <script src="{{url_for('static', filename = 'js/home.js')}}"></script>
 </body>
 </body>
 </html>
